@@ -28,7 +28,7 @@
         msg: String
         },
       methods: {
-          makeDraggable: function (evt) {
+          makeDraggable(evt) {
               var svg = evt.target;
               svg.addEventListener('mousedown', startDrag);
               svg.addEventListener('mousemove', drag);
