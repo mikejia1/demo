@@ -11,15 +11,9 @@
              id="canvas"
              viewBox="0 0 60 40"
              @load="makeDraggable">
-            <svg xmlns="http://www.w3.org/2000/svg"
-                 v-html="svgFile">
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" v-for="(svg, index) in svgFiles" v-bind:key="index" v-html="svg"/>
             <rect class="draggable"
-                  fill="#007bff" x="2" y="4" width="6" height="2" transform="rotate(90, 5, 5) translate(10, 0)" />
-            <ellipse class="draggable" fill="#ff00af" cx="5" cy="5" rx="3" ry="2" transform="translate(10, 0)" />
-            <polygon class="draggable" fill="#ffa500" transform="rotate(15, 15, 15)" points="16.9 15.6 17.4 18.2 15 17 12.6 18.2 13.1 15.6 11.2 13.8 13.8 13.4 15 11 16.2 13.4 18.8 13.8" />
-            <path class="draggable" stroke="#2bad7b" stroke-width="0.5" fill="none" d="M1 5C5 1 5 9 9 5" transform="translate(20)" />
-
+                  fill="#b17bff" x="4" y="1" width="3" height="3" transform="translate(10, 0)" />
         </svg>
     </div>
 </template>
@@ -30,7 +24,7 @@
         props: {
             msg: String
         },
-        data: () => ({ file: null, content: null, svgFile: null }),
+        data: () => ({ file: null, content: null, tempSvg: null, svgFiles: [],}),
         methods: {
             //https://masteringjs.io/tutorials/vue/file
             readFile() {
@@ -39,8 +33,9 @@
                 if (this.file.name.includes(".svg")) {
                     this.content = "check the console for file output";
                     reader.onload = (res) => {
-                        console.log(res.target.result);
-                        this.svgFile = res.target.result;
+                        this.tempSvg = res.target.result;
+                        this.svgFiles.push(this.tempSvg);
+                        console.log(this.svgFiles);
                     };
                     reader.onerror = (err) => console.log(err);
                     reader.readAsText(this.file);
