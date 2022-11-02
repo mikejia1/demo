@@ -6,15 +6,29 @@
             <input type="file" ref="doc" @change="readFile()" />
             <div>{{content}}</div>
         </div>
-        <!--does this canvas need to be an svg? -->
+        <div style="border-style:solid">
+            <input type="text" v-model="url" />
+            <input type="button" value="submit url" v-on:click="readUrl()" />
+            <div>{{content}}</div>
+        </div>
+    </div>
+    <!--does this canvas need to be an svg? -->
+    <div style="border-style:solid">
         <svg xmlns="http://www.w3.org/2000/svg"
              id="canvas"
              viewBox="0 0 60 40"
              @load="makeDraggable">
-            <svg xmlns="http://www.w3.org/2000/svg" v-for="(svg, index) in svgFiles" v-bind:key="index" v-html="svg"/>
+            <svg xmlns="http://www.w3.org/2000/svg" v-for="(svg, index) in svgFiles" v-bind:key="index" v-html="svg" />
             <rect class="draggable"
                   fill="#b17bff" x="4" y="1" width="3" height="3" transform="translate(10, 0)" />
         </svg>
+    </div>
+    <div style="border-style:solid">
+        <img src="@/assets/ellipse.svg" />
+        <img src="@/assets/rectangle.svg" />
+        <img src="@/assets/squiggle.svg" />
+        <img src="@/assets/star.svg" />
+        <img src="@/assets/zip.svg" />
     </div>
 </template>
 
@@ -24,7 +38,7 @@
         props: {
             msg: String
         },
-        data: () => ({ file: null, content: null, tempSvg: null, svgFiles: [],}),
+        data: () => ({ file: null, content: null, url: null, svgFiles: [], }),
         methods: {
             //https://masteringjs.io/tutorials/vue/file
             readFile() {
@@ -33,15 +47,22 @@
                 if (this.file.name.includes(".svg")) {
                     this.content = "check the console for file output";
                     reader.onload = (res) => {
-                        this.tempSvg = res.target.result;
-                        this.svgFiles.push(this.tempSvg);
-                        console.log(this.svgFiles);
+                        this.svgFiles.push(res.target.result);
                     };
                     reader.onerror = (err) => console.log(err);
                     reader.readAsText(this.file);
                 } else {
                     this.content = "please select an svg file";
                 }
+            },
+            readUrl() {
+                fetch(this.url).then(res => res.blob())
+                    .then(blob => {
+                        console.log(blob.text());
+                        blob.text().then(res => {
+                            this.svgFiles.push(res);
+                        })
+                    })
             },
 
             makeDraggable(evt) {
