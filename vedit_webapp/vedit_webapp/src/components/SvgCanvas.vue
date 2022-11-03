@@ -3,13 +3,21 @@
         <h1>{{ msg }}</h1>
         <!-- https://www.petercollingridge.co.uk/tutorials/svg/interactive/javascript/ -->
         <div style="border-style:solid">
+            <div> Upload an SVG file. </div>
             <input type="file" ref="doc" @change="readFile()" />
-            <div>{{content}}</div>
+            <div><br/></div>
         </div>
         <div style="border-style:solid">
+            <div> Import svg from a link. </div>
             <input type="text" v-model="url" />
-            <input type="button" value="submit url" v-on:click="readUrl()" />
-            <div>{{content}}</div>
+            <input type="button" value="fetch file from url" v-on:click="readUrl()" />
+            <div>{{content}}<br/></div>
+        </div>
+        <div style="border-style:solid">
+            <div>You can import multiple svgs at a time by supplying an API. Here is a sample: https://mocki.io/v1/1df309e6-19ef-4e1a-9fb0-94bea6060ee9 </div>
+            <input type="text" v-model="api" />
+            <input type="button" value="fetch files from API" v-on:click="fetchAPI()" />
+            <div><br /></div>
         </div>
     </div>
     <!--does this canvas need to be an svg? -->
@@ -65,7 +73,22 @@
                     })
             },
 
+            fetchAPI() {
+                fetch(this.api)
+                      .then((response) => response.json())
+                    .then((data) => {
+                        console.log(data.assets);
+                        data.assets.forEach((item) => {
+                            this.url = item.url;
+                            this.readUrl();
+                            this.url = null;
+                        })
+                    });
+
+            },
+
             makeDraggable(evt) {
+                this.fetchAPI();
                 //this.readFile();
                 var svg = evt.target;
                 console.log(svg + "makeDraggable");
