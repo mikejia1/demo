@@ -5,18 +5,22 @@
         <div style="border-style:solid">
             <div> Upload an SVG file. </div>
             <input type="file" ref="doc" @change="readFile()" />
-            <div><br/></div>
+            <div><br /></div>
         </div>
         <div style="border-style:solid">
             <div> Import svg from a link. </div>
             <input type="text" v-model="url" />
-            <input type="button" value="fetch file from url" v-on:click="readUrl()" />
-            <div>{{content}}<br/></div>
+            <input type="button" value="submit url link" v-on:click="readUrl()" />
+            <div>{{content}}<br /></div>
         </div>
         <div style="border-style:solid">
-            <div>You can import multiple svgs at a time by supplying an API. Here is a sample: https://mocki.io/v1/1df309e6-19ef-4e1a-9fb0-94bea6060ee9 </div>
+            <div>
+                You can import multiple svgs at a time by supplying an API. Here is a sample:
+                <p style="font-family:courier;">https://mocki.io/v1/1df309e6-19ef-4e1a-9fb0-94bea6060ee9</p>
+                Create your own API at <a href="https://mocki.io">mock.io</a>.
+            </div>
             <input type="text" v-model="api" />
-            <input type="button" value="fetch files from API" v-on:click="fetchAPI()" />
+            <input type="button" value="submit API link" v-on:click="fetchAPI()" />
             <div><br /></div>
         </div>
     </div>
@@ -46,7 +50,7 @@
         props: {
             msg: String
         },
-        data: () => ({ file: null, content: null, url: null, svgFiles: [], }),
+        data: () => ({ file: null, content: null, url: null, api: null, svgFiles: [], }),
         methods: {
             //https://masteringjs.io/tutorials/vue/file
             readFile() {
@@ -66,7 +70,6 @@
             readUrl() {
                 fetch(this.url).then(res => res.blob())
                     .then(blob => {
-                        console.log(blob.text());
                         blob.text().then(res => {
                             this.svgFiles.push(res);
                         })
@@ -75,9 +78,8 @@
 
             fetchAPI() {
                 fetch(this.api)
-                      .then((response) => response.json())
+                    .then((response) => response.json())
                     .then((data) => {
-                        console.log(data.assets);
                         data.assets.forEach((item) => {
                             this.url = item.url;
                             this.readUrl();
@@ -88,8 +90,6 @@
             },
 
             makeDraggable(evt) {
-                this.fetchAPI();
-                //this.readFile();
                 var svg = evt.target;
                 console.log(svg + "makeDraggable");
                 svg.addEventListener('mousedown', startDrag);
@@ -106,10 +106,7 @@
                 }
                 var selectedElement, offset, transform;
                 function startDrag(evt) {
-                    console.log(selectedElement + "selectedElement");
-                    console.log(selectedElement + "offset");
                     selectedElement = evt.target;
-                    console.log(selectedElement + "startDrag");
                     offset = getMousePosition(evt);
                     // Make sure the first transform on the element is a translate transform
                     var transforms = selectedElement.transform.baseVal;
