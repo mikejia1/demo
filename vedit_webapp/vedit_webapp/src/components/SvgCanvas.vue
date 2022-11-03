@@ -16,7 +16,7 @@
         <div style="border-style:solid">
             <div>
                 You can import multiple svgs at a time by supplying an API. Here is a sample:
-                <p style="font-family:courier;">https://mocki.io/v1/1df309e6-19ef-4e1a-9fb0-94bea6060ee9</p>
+                <p style="font-family:courier;">https://mocki.io/v1/65edb577-03e3-49b6-a449-2da55050bd0f</p>
                 Create your own API at <a href="https://mocki.io">mock.io</a>.
             </div>
             <input type="text" v-model="api" />
@@ -28,19 +28,12 @@
     <div style="border-style:solid">
         <svg xmlns="http://www.w3.org/2000/svg"
              id="canvas"
-             viewBox="0 0 60 40"
+             viewBox="0 0 600 400"
              @load="makeDraggable">
             <svg xmlns="http://www.w3.org/2000/svg" v-for="(svg, index) in svgFiles" v-bind:key="index" v-html="svg" />
             <rect class="draggable"
-                  fill="#b17bff" x="4" y="1" width="3" height="3" transform="translate(10, 0)" />
+                  fill="#b17bff" x="4" y="1" width="30" height="50" transform="translate(10, 0)" />
         </svg>
-    </div>
-    <div style="border-style:solid">
-        <img src="@/assets/ellipse.svg" />
-        <img src="@/assets/rectangle.svg" />
-        <img src="@/assets/squiggle.svg" />
-        <img src="@/assets/star.svg" />
-        <img src="@/assets/zip.svg" />
     </div>
 </template>
 
@@ -68,7 +61,7 @@
                 }
             },
             readUrl() {
-                fetch(this.url).then(res => res.blob())
+                fetch("https://proxy.cors.sh/" + this.url).then(res => res.blob())
                     .then(blob => {
                         blob.text().then(res => {
                             this.svgFiles.push(res);
@@ -107,6 +100,7 @@
                 var selectedElement, offset, transform;
                 function startDrag(evt) {
                     selectedElement = evt.target;
+                    if (selectedElement.id == "canvas") return;
                     offset = getMousePosition(evt);
                     // Make sure the first transform on the element is a translate transform
                     var transforms = selectedElement.transform.baseVal;
