@@ -23,6 +23,7 @@
             <input type="button" value="submit API link" v-on:click="fetchAPI()" />
             <div><br /></div>
         </div>
+        <input type="button" value="rotate svg ordering" v-on:click="rotateOrder()" />
     </div>
     <!--does this canvas need to be an svg? -->
     <div style="border-style:solid">
@@ -80,6 +81,11 @@
                         })
                     });
 
+            },
+
+            rotateOrder() {
+                var temp = this.svgFiles.pop();
+                this.svgFiles.unshift(temp);
             },
 
             makeDraggable(evt) {
