@@ -32,8 +32,6 @@
              viewBox="0 0 600 400"
              @load="makeDraggable">
             <svg xmlns="http://www.w3.org/2000/svg" v-for="(svg, index) in svgFiles" v-bind:key="index" v-html="svg" />
-            <rect class="draggable"
-                  fill="#b17bff" x="4" y="1" width="30" height="50" transform="translate(10, 0)" />
         </svg>
     </div>
 </template>
@@ -44,7 +42,16 @@
         props: {
             msg: String
         },
-        data: () => ({ file: null, content: null, url: null, api: null, svgFiles: [], }),
+        data: () => ({
+            file: null,
+            content: null,
+            url: null,
+            api: null,
+            svgFiles: [
+                '<rect class="draggable" fill = "#b17bff" x = "4" y = "1" width = "30" height = "50" transform = "translate(10, 0)" />',
+                '<ellipse class="draggable" fill="#ff00af" cx="50" cy="50" rx="30" ry="20" transform="translate(10, 0)" />',
+            ],
+        }),
         methods: {
             //https://masteringjs.io/tutorials/vue/file
             readFile() {
