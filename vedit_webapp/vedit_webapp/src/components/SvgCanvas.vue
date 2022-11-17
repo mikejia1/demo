@@ -47,6 +47,7 @@
             content: null,
             url: null,
             api: null,
+            classCounter: 0,
             svgFiles: [
                 '<rect class="draggable" fill = "#b17bff" x = "4" y = "1" width = "30" height = "50" transform = "translate(10, 0)" />',
                 '<ellipse class="draggable" fill="#ff00af" cx="50" cy="50" rx="30" ry="20" transform="translate(10, 0)" />',
@@ -60,7 +61,7 @@
                 if (this.file.name.includes(".svg")) {
                     this.content = "check the console for file output";
                     reader.onload = (res) => {
-                        this.svgFiles.push(res.target.result);
+                        this.addToSvgCanvas(res.target.result);
                     };
                     reader.onerror = (err) => console.log(err);
                     reader.readAsText(this.file);
@@ -72,9 +73,46 @@
                 fetch("https://proxy.cors.sh/" + this.url).then(res => res.blob())
                     .then(blob => {
                         blob.text().then(res => {
-                            this.svgFiles.push(res);
+                            this.addToSvgCanvas(res);
                         })
                     })
+            },
+
+            addToSvgCanvas(svg) {
+                this.svgFiles.push(this.processRawSvg(svg));
+            },
+
+            processRawSvg(corpus) {
+                //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/match
+                //remove bounding viewbox, width and height
+                const viewbox = corpus.match(/viewBox=".*?"/g);
+                const width = corpus.match(/width=".*?"/g);
+                const height = corpus.match(/height=".*?"/g);
+                if (viewbox != null) {
+                    corpus = corpus.replace(viewbox, '');
+                }
+                if (width != null) {
+                    corpus = corpus.replace(width, '');
+                }
+                if (height != null) {
+                    corpus = corpus.replace(height, '');
+                }
+
+                //disambiguate class styling across all files
+                const rawClasses = corpus.match(/class=".*?"/g);
+                const classes = [...new Set(rawClasses)];
+                for (var i = 0; i < classes.length; i++) {
+                    const oldClassName = classes[i].replace('class=', '').replaceAll('"', '');
+                    const newClassName = 'newClass-' + this.classCounter;
+                    //replace classNames referenced in the main body. 
+                    corpus = corpus.replaceAll('"' + oldClassName + '"', '"' + newClassName + '"');
+                    //replace classNames declared in styling.
+                    corpus = corpus.replaceAll(oldClassName, newClassName);
+
+                    console.log(corpus);
+                    this.classCounter++;
+                }
+                return corpus;
             },
 
             fetchAPI() {
