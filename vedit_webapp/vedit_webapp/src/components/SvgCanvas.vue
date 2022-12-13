@@ -25,8 +25,11 @@
         </div>
         <input type="button" value="rotate svg ordering" v-on:click="rotateOrder()" />
     </div>
+    <div id="scene-container" style="border-style:solid" minHeight="500">
+        <the-canvas></the-canvas>
+    </div>
     <!--does this canvas need to be an svg? -->
-    <div style="border-style:solid">
+    <div style="border-style:solid" minHeight="500">
         <svg xmlns="http://www.w3.org/2000/svg"
              id="canvas"
              viewBox="0 0 600 400"
@@ -37,8 +40,12 @@
 </template>
 
 <script>
+    import TheCanvas from './TheCanvas'
     export default {
         name: 'SvgCanvas',
+        components: {
+            TheCanvas,
+        },
         props: {
             msg: String
         },
@@ -192,6 +199,18 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+    #scene-container {
+        /* tell our scene container to take up the full page */
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        /*
+    Set the container's background color to the same as the scene's
+    background to prevent flashing on load
+  */
+        background-color: skyblue;
+    }
+
     h3 {
         margin: 40px 0 0;
     }

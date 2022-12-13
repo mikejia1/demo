@@ -1,5 +1,5 @@
 <template>
-    <SvgCanvas></SvgCanvas>
+    <svg-canvas></svg-canvas>
 </template>
 
 <script>
